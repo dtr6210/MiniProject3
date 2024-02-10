@@ -5,8 +5,10 @@ require("dotenv").config();
 // parse requests of content-type -application/json
 
 let dbConnect = require("./dbConnect");
+let userRoutes = require('./routes/userRoutes');
 
 app.use(express.json());
+app.use('/api/users', userRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to myMongoDB application." });
