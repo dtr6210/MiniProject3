@@ -11,6 +11,7 @@ const getUsers = (res) => {
       res.send({ result: 500, error: err.message });
     });
 };
+
 const createUser = (data, res) => {
   // creates a new user using JSON data POSTed in request body
   console.log(data);
