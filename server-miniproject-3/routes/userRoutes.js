@@ -32,4 +32,13 @@ router.delete("/:id", (req, res) => {
   Controllers.userController.deleteUser(req, res);
 });
 
+// http://localhost:8080/api/users/login   Adds a POST route to login a user
+router.post("/login", (req, res) => {
+  console.log(
+    "POST /api/users/login - logging a new user with data:",
+    req.body
+  );
+  Controllers.userController.loginUser(req, res);
+});
+
 module.exports = router;
