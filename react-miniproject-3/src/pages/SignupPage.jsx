@@ -14,21 +14,41 @@ import Container from "@mui/material/Container";
 import Footer from "../components/Footer";
 import Logo2 from "/Logo2.png";
 
-
 export default function SignupPage() {
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    const formData = new FormData(event.currentTarget);
     console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+      username: formData.get("username"),
+      email: formData.get("email"),
+      password: formData.get("password"),
     });
+    const data = {
+      username: formData.get("username"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+    };
+    let result = await fetch(`http://localhost:8080/api/users/create`, {
+      method: "POST", //specify the http method
+      body: JSON.stringify(data), //the body is where the data is.  and stringify changes language to JSON
+      headers: { "Content-Type": "application/json" }, //need to tell server what language we are speakiing.
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
   };
 
   return (
     <Container component="main" maxWidth="lg">
       <CssBaseline />
-      <Grid container spacing={4} alignItems="center" justifyContent="center" sx={{backgroundColor: 'white', borderRadius: '10px'}}>
+      <Grid
+        container
+        spacing={4}
+        alignItems="center"
+        justifyContent="center"
+        sx={{ backgroundColor: "white", borderRadius: "10px" }}
+      >
         {/* Signup Form Grid */}
         <Grid item xs={4} maxWidth={6}>
           <Box
@@ -52,7 +72,7 @@ export default function SignupPage() {
               sx={{ mt: 3 }}
             >
               <Grid container spacing={2}>
-              <Grid item xs={12}>
+                <Grid item xs={12}>
                   <TextField
                     required
                     fullWidth

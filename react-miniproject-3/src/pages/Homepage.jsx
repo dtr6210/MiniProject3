@@ -26,7 +26,7 @@ export default function SignInSide() {
   const { currentUser, handleUpdateUser } = useUserContext();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     //validating user input
@@ -35,9 +35,33 @@ export default function SignInSide() {
     } else if (userPassword === userEmail) {
       setSubmitResult("Password cannot be the same as email");
     } else {
-      setSubmitResult("Successful login");
-      handleUpdateUser({ email: userEmail });
-      navigate("/main"); //navigate to main page after succesful login
+      // successful password
+      const data = { email: userEmail, password: userPassword };
+      //connect to our api using fetch
+      let result = await fetch(`http://localhost:8080/api/users/login`, {
+        method: "POST", //specify the http method
+        body: JSON.stringify(data), //the body is where the data is.  and stringify changes language to JSON
+        headers: { "Content-Type": "application/json" }, //need to tell server what language we are speakiing.
+      })
+        .then((response) => response.json()) //convert back from json
+        .then((data) => {
+          //now we have the data
+          // user not found, what to do?  display message that user is not found.  allow another login?
+          if (data.result === 404) {
+            setSubmitResult("Email does not exist");
+          } else if (data.result === 200) {
+            setSubmitResult("Successful Login");
+            handleUpdateUser({ email: userEmail });
+            navigate("/main");
+          } else if (data.result === 400) {
+            setSubmitResult("Password is not correct");
+          }
+          console.log("post response", data.result);
+          return data.result;
+        });
+      // setSubmitResult("Successful login");
+      // handleUpdateUser({ email: userEmail });
+      // navigate("/main"); //navigate to main page after succesful login
     }
   };
 
