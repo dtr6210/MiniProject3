@@ -1,33 +1,54 @@
 import React, { useState } from "react";
-import {
-  Button,
-  TextField,
-  Box,
-  Typography,
-  Container,
-  InputAdornment,
-  IconButton,
-} from "@mui/material";
-import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import { useNavigate } from "react-router-dom";
+import { TextField, Button, Box, Typography, Container } from "@mui/material";
+import { useUserContext } from "../context/UserContext";
 
 export default function CreatePostPage() {
   const [title, setTitle] = useState("");
-  const [instructions, setInstructions] = useState("");
   const [ingredients, setIngredients] = useState("");
-  const [image, setImage] = useState(null);
+  const [directions, setDirections] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [submitResult, setSubmitResult] = useState("");
+  const { currentUser } = useUserContext();
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Logic to handle form submission, including image upload
-  };
 
-  const handleImageChange = (event) => {
-    setImage(event.target.files[0]);
+    const postData = {
+      author: currentUser._id,
+      recipe: title,
+      ingredients: ingredients.split(","),
+      directions,
+      picture: imageUrl,
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/api/posts/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSubmitResult("Post created successfully");
+        navigate("/main");
+      } else {
+        setSubmitResult(data.message || "Failed to create post");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setSubmitResult("An error occurred. Please try again.");
+    }
   };
 
   return (
     <Container component="main" maxWidth="md">
-      <Typography component="h1" variant="h5">
+      <Typography component="h1" variant="h5" sx={{ mt: 5 }}>
         Share Your Recipe
       </Typography>
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -48,7 +69,7 @@ export default function CreatePostPage() {
           required
           fullWidth
           name="ingredients"
-          label="Ingredients"
+          label="Ingredients (comma separated)"
           type="text"
           id="ingredients"
           autoComplete="ingredients"
@@ -61,25 +82,28 @@ export default function CreatePostPage() {
           margin="normal"
           required
           fullWidth
-          name="instructions"
-          label="Instructions"
+          name="directions"
+          label="Directions"
           type="text"
-          id="instructions"
-          autoComplete="instructions"
-          value={instructions}
-          onChange={(e) => setInstructions(e.target.value)}
+          id="directions"
+          autoComplete="directions"
+          value={directions}
+          onChange={(e) => setDirections(e.target.value)}
           multiline
           rows={6}
         />
-        <Button
-          variant="contained"
-          component="label"
-          startIcon={<AddAPhotoIcon />}
-          sx={{ mt: 2, mb: 2 }}
-        >
-          Upload Image
-          <input type="file" hidden onChange={handleImageChange} />
-        </Button>
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          name="imageUrl"
+          label="Image URL"
+          type="text"
+          id="imageUrl"
+          autoComplete="imageUrl"
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
+        />
         <Button
           type="submit"
           fullWidth

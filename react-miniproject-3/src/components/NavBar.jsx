@@ -14,7 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import LunchDiningIcon from "@mui/icons-material/LunchDining";
 import { Link } from "react-router-dom";
 
-const pages = ["Main", "About"];
+const pages = ["Main", "About", "Create Post"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function NavBar() {
@@ -126,10 +126,10 @@ function NavBar() {
                 sx={{ my: 2, color: "white", display: "block" }}
               >
                 <Link
-                  to={`/${page.toLowerCase()}`}
+                  to={`/${page.toLowerCase().replace(/\s+/g, "")}`} // Convert page names to URL paths
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
-                  <Typography textAlign="center">{page}</Typography>
+                  {page}
                 </Link>
               </Button>
             ))}

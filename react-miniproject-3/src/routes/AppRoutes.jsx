@@ -6,6 +6,7 @@ import MainFeedPage from "../pages/MainFeedPage";
 import MealDetailPage from "../pages/MealDetails";
 import AboutPage from "../pages/AboutPage";
 import CreatePostPage from "../pages/CreatePostPage";
+import ProtectedRoute from "./ProtectedRoutes";
 
 //component to define all application routes
 function AppRoutes(props) {
@@ -13,10 +14,10 @@ function AppRoutes(props) {
     <Routes>
       <Route index element={<Homepage {...props} />} />
       <Route path="signup" element={<SignupPage {...props} />} />
-      <Route path="main" element={<MainFeedPage {...props} />} />
       <Route path="about" element={<AboutPage {...props} />} />
-      <Route path="meal/:mealId" element={<MealDetailPage {...props} />} />
-      <Route path="create-post" element={<CreatePostPage {...props} />} />
+      <Route path="main" element={<ProtectedRoute><MainFeedPage {...props} /></ProtectedRoute>} />
+      <Route path="meal/:mealId" element={<ProtectedRoute><MealDetailPage {...props} /></ProtectedRoute>} />
+      <Route path="createpost" element={<ProtectedRoute><CreatePostPage {...props} /></ProtectedRoute>} />
       {/* special route to handle if none of the above match */}
       <Route path="*" element={<PageNotFound />} />
     </Routes>
