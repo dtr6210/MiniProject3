@@ -50,8 +50,9 @@ export default function SignInSide() {
           if (data.result === 404) {
             setSubmitResult("Email does not exist");
           } else if (data.result === 200) {
+            localStorage.setItem("user", JSON.stringify(data.data[0]));
             setSubmitResult("Successful Login");
-            handleUpdateUser({ email: userEmail });
+            handleUpdateUser(data.data[0]);
             navigate("/main");
           } else if (data.result === 400) {
             setSubmitResult("Password is not correct");
