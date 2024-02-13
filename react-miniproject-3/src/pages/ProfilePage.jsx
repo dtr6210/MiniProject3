@@ -32,6 +32,31 @@ const ProfilePage = () => {
     fetchPosts();
   }, [currentUser?._id]); // Rerun when currentUser changes
 
+  const handleDeletePost = async (postId) => {
+    const response = await fetch(`http://localhost:8080/api/posts/${postId}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      setPosts(posts.filter((post) => post._id !== postId));
+    }
+  };
+
+  const handleUpdatePost = async (postId, { editedTitle, editedDirections }) => {
+    const response = await fetch(`http://localhost:8080/api/posts/${postId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            recipe: editedTitle, 
+            directions: editedDirections,
+        }),
+    });
+    if (response.ok) {
+      const updatedPost = await response.json();
+      setPosts(posts.map((post) => (post._id === postId ? updatedPost : post)));
+    }
+  };
   return (
     <Container maxWidth="xl" sx={{ mt: 5, padding: 2 }}>
       <Grid container spacing={2}>
@@ -93,21 +118,30 @@ const ProfilePage = () => {
 
         {/* Middle - for user posts */}
         <Grid item xs={12} sm={8} md={6}>
-  <Paper elevation={3} sx={{ padding: 2, minHeight: "80vh", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-    <Typography variant="h6" sx={{ marginBottom: 2 }}>My Posts</Typography>
-    <div style={{ width: '100%', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 2 }}>
-      {posts.map((post) => (
-        <ProfileRecipeCard
-          key={post._id}
-          title={post.recipe}
-          imageUrl={post.picture}
-          ingredients={post.ingredients}
-          directions={post.directions}
-        />
-      ))}
-    </div>
-  </Paper>
-</Grid>
+          <Paper elevation={3} sx={{ padding: 2, minHeight: "80vh" }}>
+            <Typography variant="h6">My Posts</Typography>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              {posts.map((post) => (
+                <ProfileRecipeCard
+                  key={post._id}
+                  id={post._id}
+                  title={post.recipe}
+                  imageUrl={post.picture}
+                  ingredients={post.ingredients}
+                  directions={post.directions}
+                  onDelete={handleDeletePost}
+                  onUpdate={handleUpdatePost}
+                />
+              ))}
+            </div>
+          </Paper>
+        </Grid>
 
         {/* Right side - Advertising */}
         <Grid item xs={12} sm={2} md={3}>
