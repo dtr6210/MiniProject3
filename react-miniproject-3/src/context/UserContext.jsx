@@ -14,13 +14,19 @@ export const UserProvider = (props) => {
     setCurrentUser(user);
   };
 
+  // clear state to logout user
+  const handleLogout = () => {
+    setCurrentUser({});  
+    localStorage.removeItem('user');
+  }
+
   
    // 2. Provide the context.
  // The Provider component of any context (UserContext.Provider)
  // sends data via its value prop to all children at every level.
  // We are sending both the current user and an update function
   return (
-    <UserContext.Provider value={{ currentUser, handleUpdateUser }}>
+    <UserContext.Provider value={{ currentUser, handleUpdateUser, handleLogout }}>
       {props.children}
     </UserContext.Provider>
   );
