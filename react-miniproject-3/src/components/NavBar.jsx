@@ -12,14 +12,23 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import LunchDiningIcon from "@mui/icons-material/LunchDining";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useUserContext } from "../context/UserContext";
 
 const pages = ["Main", "About", "Create Post"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = [
+  { name: "Profile", path: "/profile" },
+  { name: "Account", path: "/account" },
+  { name: "Dashboard", path: "/dashboard" },
+  { name: "Logout" },
+];
 
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const navigate = useNavigate();
+  const { handleLogout } = useUserContext();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -35,6 +44,13 @@ function NavBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  // function to handle logout
+
+  const logout = () => {
+    handleLogout(); // clear user 
+    navigate("/"); // after logout go to homepage
+  }
 
   return (
     <AppBar position="fixed" sx={{ bgcolor: "#B5B541" }}>
@@ -116,7 +132,7 @@ function NavBar() {
               textDecoration: "none",
             }}
           >
-            LOGO
+            EAT AND GREET
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
@@ -157,9 +173,24 @@ function NavBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+              {settings.map((setting) =>
+                setting.name === "Logout" ? (
+                  // Logout item
+                  <MenuItem key={setting.name} onClick={logout}>
+                    <Typography textAlign="center" style={{ textDecoration: "none", color: "inherit" }}>
+                      {setting.name}
+                    </Typography>
+                  </MenuItem>
+                ) : (
+                <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
+                  <Typography
+                    textAlign="center"
+                    component={Link}
+                    to={setting.path}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    {setting.name}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>

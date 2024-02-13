@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
@@ -22,9 +22,15 @@ export default function SignInSide() {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [submitResult, setSubmitResult] = useState("");
-
   const { currentUser, handleUpdateUser } = useUserContext();
   const navigate = useNavigate();
+
+  // take to main feed if already signed in
+  useEffect(() =>{
+    if(currentUser.email) {
+      navigate('/main');
+    }
+  }, [currentUser, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
