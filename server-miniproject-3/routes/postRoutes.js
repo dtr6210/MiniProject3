@@ -32,4 +32,12 @@ router.delete("/:id", (req, res) => {
     Controllers.postController.deletePost(req, res);
   });
 
+  // http://localhost:8080/api/posts/byUser/<id>   Adds a GET route to get all posts by a user
+router.get("/byUser/:id", (req, res) => {
+    console.log(`Getting all posts by user`);
+    Controllers.postController.getPostsByUser(req, res);
+  });
+
+
+
   module.exports = router;
