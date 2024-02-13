@@ -1,4 +1,4 @@
-import { useContext, createContext, useState } from "react";
+import { useContext, createContext, useState, useCallback } from "react";
 
 // 1. Create the context
 const UserContext = createContext();
@@ -10,9 +10,9 @@ export const UserProvider = (props) => {
   const [currentUser, setCurrentUser] = useState({});
 
   // sets user object in state, shared via context
-  const handleUpdateUser = (user) => {
+  const handleUpdateUser = useCallback((user) => {
     setCurrentUser(user);
-  };
+  }, []);
 
   // clear state to logout user
   const handleLogout = () => {
