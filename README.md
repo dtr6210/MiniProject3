@@ -35,7 +35,7 @@ To set up the Express server and connect to MongoDB, navigate to your project's 
 
 npm install express mongoose
 
-"mongoose" is an ODM (Object Data Modeling) library for MongoDB and Node.js.  It manages relationships between
+Mongoose is an ODM (Object Data Modeling) library for MongoDB and Node.js.  It manages relationships between
 data, provides schema validation, and is used to translate between ojects in code and the representation of those objects
 in MongoDB.
 
