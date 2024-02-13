@@ -1,9 +1,37 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Paper, Typography, Container, Avatar } from "@mui/material";
 import defaultprofile from "/defaultprofile.png";
 import AdvertisingCard from "../components/AdvertisingCard";
+import ProfileRecipeCard from "../components/ProfileRecipeCard";
+import { useUserContext } from "../context/UserContext";
 
 const ProfilePage = () => {
+  const [posts, setPosts] = useState([]);
+  const { currentUser } = useUserContext(); // to accesss current user data
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      if (currentUser?._id) {
+        // Check for current user id
+        try {
+          const response = await fetch(
+            `http://localhost:8080/api/posts/byUser/${currentUser._id}`
+          ); //look for current user by id
+          const data = await response.json();
+          if (response.ok) {
+            setPosts(data.data);
+          } else {
+            throw new Error("Failed to fetch posts");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+    };
+
+    fetchPosts();
+  }, [currentUser?._id]); // Rerun when currentUser changes
+
   return (
     <Container maxWidth="xl" sx={{ mt: 5, padding: 2 }}>
       <Grid container spacing={2}>
@@ -65,11 +93,21 @@ const ProfilePage = () => {
 
         {/* Middle - for user posts */}
         <Grid item xs={12} sm={8} md={6}>
-          <Paper elevation={3} sx={{ padding: 2, minHeight: "80vh" }}>
-            <Typography variant="h6">My Posts</Typography>
-            {/* Posts content goes here */}
-          </Paper>
-        </Grid>
+  <Paper elevation={3} sx={{ padding: 2, minHeight: "80vh", display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Typography variant="h6" sx={{ marginBottom: 2 }}>My Posts</Typography>
+    <div style={{ width: '100%', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 2 }}>
+      {posts.map((post) => (
+        <ProfileRecipeCard
+          key={post._id}
+          title={post.recipe}
+          imageUrl={post.picture}
+          ingredients={post.ingredients}
+          directions={post.directions}
+        />
+      ))}
+    </div>
+  </Paper>
+</Grid>
 
         {/* Right side - Advertising */}
         <Grid item xs={12} sm={2} md={3}>
@@ -84,7 +122,7 @@ const ProfilePage = () => {
             }}
           >
             <Typography variant="h6">Your Ads Here:</Typography>
-            {/* Advertising cards go here */}
+            {/* Advertising cards */}
             <AdvertisingCard />
             <AdvertisingCard />
             <AdvertisingCard />
